@@ -1,0 +1,312 @@
+### C++ STL: `next_permutation()`, `prev_permutation()` & `pair`
+
+These are very useful for ICPC/Codeforces problems. Add these to your STL cheat sheet.
+
+### 1\. Permutation STL
+
+Header:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+```
+
+### `next_permutation()`
+
+Generates the next lexicographically greater permutation.
+
+```cpp
+vector<int> v = {1, 2, 3};
+
+do {
+    for (int x : v) cout << x << " ";
+    cout << "\n";
+} while (next_permutation(v.begin(), v.end()));
+```
+
+Output:
+
+```text
+1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 1 2
+3 2 1
+```
+
+Always sort first if you want to generate ALL permutations.
+
+```cpp
+sort(v.begin(), v.end());
+
+do {
+    // Process each permutation
+} while (next_permutation(v.begin(), v.end()));
+```
+
+### `prev_permutation()`
+
+Generates the previous lexicographically smaller permutation.
+
+```cpp
+vector<int> v = {3, 2, 1};
+
+do {
+    for (int x : v) cout << x << " ";
+    cout << "\n";
+} while (prev_permutation(v.begin(), v.end()));
+```
+
+### Other permutation tricks
+
+| STL / Function     | Purpose                                               |
+| ------------------ | ----------------------------------------------------- |
+| next_permutation() | Next arrangement                                      |
+| prev_permutation() | Previous arrangement                                  |
+| sort()             | Sort before generating all                            |
+| reverse()          | Reverse an arrangement                                |
+| is_permutation()   | Check whether two sequences contain the same elements |
+
+### Permutation formula
+
+P(n,r)=\\frac{n!}{(n-r)!}
+
+### Example ICPC problem: Generate all permutations
+
+Problem: Given `n` distinct numbers, print all possible arrangements.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<int> v(n);
+
+    for (int &x : v) cin >> x;
+
+    sort(v.begin(), v.end());
+
+    do {
+        for (int x : v)
+            cout << x << " ";
+        cout << "\n";
+
+    } while (next_permutation(v.begin(), v.end()));
+
+    return 0;
+}
+```
+
+Complexity: including printing each permutation.
+
+### 2\. Pair STL
+
+A `pair` stores exactly two values together. They can have different data types.
+
+### Declaration
+
+```cpp
+pair<int, int> p;
+
+p.first = 10;
+p.second = 20;
+
+cout << p.first << " " << p.second;
+```
+
+Output:
+
+```text
+10 20
+```
+
+### Different data types
+
+```cpp
+pair<int, string> p = {1, "Anisha"};
+
+cout << p.first << "\n";
+cout << p.second << "\n";
+```
+
+### Shortcut: `make_pair()`
+
+```cpp
+pair<int, int> p = make_pair(10, 20);
+```
+
+Or simply:
+
+```cpp
+pair<int, int> p = {10, 20};
+```
+
+### Pair inside vector
+
+Very important for competitive programming.
+
+```cpp
+vector<pair<int, int>> v;
+
+v.push_back({2, 50});
+v.push_back({1, 30});
+v.push_back({3, 40});
+
+for (auto p : v) {
+    cout << p.first << " " << p.second << "\n";
+}
+```
+
+### Sorting pairs
+
+```cpp
+vector<pair<int, int>> v = {
+    {3, 40},
+    {1, 50},
+    {2, 30},
+    {1, 20}
+};
+
+sort(v.begin(), v.end());
+```
+
+Result:
+
+```text
+1 20
+1 50
+2 30
+3 40
+```
+
+Remember: Pair sorting follows:
+
+* Sort by `.first` in ascending order.
+
+* If `.first` is equal, sort by `.second` in ascending order.
+
+### Custom sorting with comparator
+
+Sort by second value:
+
+```cpp
+sort(v.begin(), v.end(), [](auto a, auto b) {
+    return a.second < b.second;
+});
+```
+
+Sort descending by first:
+
+```cpp
+sort(v.begin(), v.end(), [](auto a, auto b) {
+    return a.first > b.first;
+});
+```
+
+### Structured binding (C++17)
+
+A very useful shortcut.
+
+```cpp
+pair<int, int> p = {10, 20};
+
+auto [a, b] = p;
+
+cout << a << " " << b;
+```
+
+For vector of pairs:
+
+```cpp
+for (auto [x, y] : v) {
+    cout << x << " " << y << "\n";
+}
+```
+
+### 3\. Pair + Other STL combinations
+
+### Pair + Priority Queue
+
+Minimize distance or cost:
+
+```cpp
+priority_queue<
+    pair<int,int>,
+    vector<pair<int,int>>,
+    greater<pair<int,int>>
+> pq;
+
+pq.push({10, 2});
+pq.push({5, 1});
+pq.push({8, 3});
+
+while (!pq.empty()) {
+    auto [dist, node] = pq.top();
+    pq.pop();
+
+    cout << dist << " " << node << "\n";
+}
+```
+
+Useful in Dijkstra's algorithm.
+
+### Pair + Map
+
+```cpp
+map<int, string> mp;
+
+mp[1] = "Apple";
+mp[2] = "Banana";
+
+for (auto [key, value] : mp) {
+    cout << key << " " << value << "\n";
+}
+```
+
+### Pair + Coordinate problems
+
+```cpp
+pair<int, int> point = {3, 5};
+
+// x = 3, y = 5
+
+int distance = abs(point.first) + abs(point.second);
+```
+
+Useful for grids, coordinates and Manhattan distance.
+
+### 4\. Quick revision cheat sheet
+
+| Syntax                                        | What it does                            |
+| --------------------------------------------- | --------------------------------------- |
+| next_permutation(a.begin(), a.end())          | Next permutation                        |
+| prev_permutation(a.begin(), a.end())          | Previous permutation                    |
+| is_permutation(a.begin(), a.end(), b.begin()) | Check permutation                       |
+| pair<int,int> p                               | Declare pair                            |
+| p.first                                       | First value                             |
+| p.second                                      | Second value                            |
+| make_pair(a,b)                                | Create pair                             |
+| vector<pair<int,int>> v                       | Store multiple pairs                    |
+| sort(v.begin(),v.end())                       | Sort pairs                              |
+| greater<pair<int,int>>()                      | Descending/ascending comparator context |
+| auto [x,y] = p                                | Unpack pair (C++17)                     |
+| tie(x,y) = p                                  | Unpack using tie                        |
+
+### 5\. ICPC patterns to remember
+
+| Problem situation                   | Use                   |
+| ----------------------------------- | --------------------- |
+| Generate every possible arrangement | next_permutation()    |
+| Find previous arrangement           | prev_permutation()    |
+| Store {value, index}                | pair<int,int>         |
+| Store {distance, node}              | Pair + priority queue |
+| Store {start, end} intervals        | Vector of pairs       |
+| Sort by value, then index           | Default pair sorting  |
+| Sort by custom condition            | Lambda comparator     |
+| Grid coordinates (x,y)              | Pair                  |
+
+My recommendation: Master `next_permutation()` and `vector<pair<int,int>>` first. Both are extremely useful in ICPC problems.
