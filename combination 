@@ -1,0 +1,297 @@
+### C++ STL: Combinations (ICPC Cheat Sheet)
+
+In competitive programming, permutation and combination are different:
+
+* Permutation: Order matters. `1, 2, 3` and `3, 2, 1` are different.
+
+* Combination: Order does NOT matter. `{1, 2, 3}` and `{3, 2, 1}` are the same.
+
+Example: Choose 2 numbers from 3
+
+Permutation
+
+### 6
+
+Different arrangements
+
+`12, 21, 13, 31, 23, 32`
+
+Combination
+
+### 3
+
+Unique selections
+
+`12, 13, 23`
+
+### 1\. Combination formula
+
+C(n,r)=\\frac{n!}{r!(n-r)!}
+
+Where:
+
+* `n` = total elements
+
+* `r` = number of elements to select
+
+* Order does not matter.
+
+Example:
+
+C(5,2)=\\frac{5!}{2!3!}=10
+
+### 2\. Does C++ have `next_combination()`?
+
+Standard C++ STL does not provide a built-in `next_combination()` like `next_permutation()`.
+
+But you can generate combinations using a few techniques.
+
+### 3\. Method 1: Using Bitmask (Very useful for ICPC)
+
+Select exactly `r` elements from `n` elements.
+
+```cpp
+int n = 4, r = 2;
+
+vector<int> a = {1, 2, 3, 4};
+
+for (int mask = 0; mask < (1 << n); mask++) {
+
+    if (__builtin_popcount(mask) != r)
+        continue;
+
+    for (int i = 0; i < n; i++) {
+        if (mask & (1 << i))
+            cout << a[i] << " ";
+    }
+
+    cout << "\n";
+}
+```
+
+Output:
+
+```text
+1 2
+1 3
+2 3
+1 4
+2 4
+3 4
+```
+
+Complexity: .
+
+Why use it?
+
+* Subset problems
+
+* Selecting teams
+
+* Choosing items
+
+* Bitmask DP
+
+### 4\. Method 2: Using Recursion (Backtracking)
+
+This is one of the most important combination techniques.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int n, r;
+vector<int> a, selected;
+
+void generate(int start) {
+
+    if (selected.size() == r) {
+        for (int x : selected)
+            cout << x << " ";
+
+        cout << "\n";
+        return;
+    }
+
+    for (int i = start; i < n; i++) {
+
+        selected.push_back(a[i]);
+
+        generate(i + 1);
+
+        selected.pop_back();
+    }
+}
+
+int main() {
+
+    n = 4, r = 2;
+
+    a = {1, 2, 3, 4};
+
+    generate(0);
+}
+```
+
+Output:
+
+```text
+1 2
+1 3
+1 4
+2 3
+2 4
+3 4
+```
+
+Understand the logic:
+
+### Combination tree: choose 2 from 4
+
+Each branch chooses a larger next index, preventing duplicates.
+
+Start
+
+1
+
+2
+
+3
+
+Select the second number from the remaining elements
+
+12, 13, 14
+
+23, 24
+
+34
+
+The most important line:
+
+```cpp
+generate(i + 1);
+```
+
+It ensures that you never select an earlier element again.
+
+### 5\. Method 3: Using `next_permutation()` as a combination generator
+
+This is a clever competitive programming trick.
+
+```cpp
+int n = 5, r = 3;
+
+vector<int> mask(n, 0);
+
+fill(mask.begin(), mask.begin() + r, 1);
+
+do {
+    for (int i = 0; i < n; i++) {
+        if (mask[i])
+            cout << i + 1 << " ";
+    }
+    cout << "\n";
+
+} while (prev_permutation(mask.begin(), mask.end()));
+```
+
+Output:
+
+```text
+1 2 3
+1 2 4
+1 2 5
+1 3 4
+1 3 5
+1 4 5
+2 3 4
+2 3 5
+2 4 5
+3 4 5
+```
+
+Why does this work?
+
+We create a binary mask with:
+
+* `1` = selected
+
+* `0` = not selected
+
+Then generate every unique arrangement of those bits.
+
+Complexity: .
+
+### 6\. Combination vs Permutation vs Subset
+
+| Concept     | Order matters? | Formula |
+| ----------- | -------------- | ------- |
+| Permutation | Yes            |         |
+| Combination | No             |         |
+| Subsets     | No             |         |
+
+### 7\. ICPC quick decision guide
+
+| Problem says...                    | Think about                |
+| ---------------------------------- | -------------------------- |
+| Arrange elements                   | next_permutation()         |
+| Choose exactly K elements          | Combination                |
+| Generate all subsets               | Bitmask                    |
+| Choose items with constraints      | Backtracking               |
+| Select teams/groups                | Combination                |
+| All possible selections with order | Permutation                |
+| Count ways to choose               |                            |
+| Optimize a selection               | DP / Greedy / Backtracking |
+
+### 8\. Useful C++ combination calculation
+
+Avoid calculating factorials directly for large `n`.
+
+```cpp
+long long nCr(int n, int r) {
+
+    if (r > n) return 0;
+
+    r = min(r, n - r);
+
+    long long ans = 1;
+
+    for (int i = 1; i <= r; i++) {
+        ans = ans * (n - i + 1) / i;
+    }
+
+    return ans;
+}
+```
+
+This is suitable when the intermediate multiplication fits in `long long`. For very large constraints, use modular arithmetic or another appropriate method.
+
+### 9\. Practice: Test your understanding
+
+Q1. Choose 3 students from 10. Which concept?
+
+Permutation
+
+Combination
+
+Binary Search
+
+Q2. Which line prevents duplicate combinations in recursion?
+
+generate(start)
+
+generate(i + 1)
+
+generate(i - 1)
+
+Q3. How many subsets does a set of 5 elements have?
+
+10
+
+25
+
+32
+
+Check answers
+
+My ICPC recommendation: Master bitmask + recursion/backtracking + `next_permutation()`. These three techniques cover a huge number of small-constraint selection and arrangement problems.
