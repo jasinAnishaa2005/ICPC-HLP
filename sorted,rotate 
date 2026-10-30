@@ -1,0 +1,267 @@
+### C++ STL: `is_sorted()` & `rotate()` — ICPC Cheat Sheet
+
+These two STL functions are useful for sorting checks, cyclic arrays, rotations, and array manipulation.
+
+### 1\. `is_sorted()`
+
+Checks whether a range is already sorted.
+
+Syntax:
+
+```cpp
+is_sorted(v.begin(), v.end());
+```
+
+Returns:
+
+* `true` → Sorted in ascending order.
+
+* `false` → Not sorted.
+
+### Example 1: Basic usage
+
+```cpp
+vector<int> v = {1, 2, 3, 4, 5};
+
+if (is_sorted(v.begin(), v.end()))
+    cout << "Sorted";
+else
+    cout << "Not Sorted";
+```
+
+Output:
+
+```text
+Sorted
+```
+
+### Example 2: Unsorted array
+
+```cpp
+vector<int> v = {1, 3, 2, 4, 5};
+
+cout << is_sorted(v.begin(), v.end());
+```
+
+Output:
+
+```text
+0
+```
+
+### Example 3: Descending order
+
+Use a comparator:
+
+```cpp
+vector<int> v = {9, 7, 5, 3, 1};
+
+if (is_sorted(v.begin(), v.end(), greater<int>()))
+    cout << "Sorted descending";
+```
+
+### Example 4: Check a particular range
+
+```cpp
+vector<int> v = {1, 2, 5, 4, 6};
+
+bool ok = is_sorted(v.begin(), v.begin() + 3);
+```
+
+Checks only `{1, 2, 5}`.
+
+### Complexity
+
+O(n)
+
+### 2\. `rotate()`
+
+Rotates elements in a range.
+
+Syntax:
+
+```cpp
+rotate(v.begin(), v.begin() + k, v.end());
+```
+
+The middle iterator determines which element becomes the first element.
+
+### Example 1: Left rotation
+
+```cpp
+vector<int> v = {1, 2, 3, 4, 5};
+
+rotate(v.begin(), v.begin() + 2, v.end());
+
+for (int x : v)
+    cout << x << " ";
+```
+
+Output:
+
+```text
+3 4 5 1 2
+```
+
+Visual understanding: Left rotate by 2
+
+1
+
+2
+
+3
+
+4
+
+5
+
+3
+
+4
+
+5
+
+1
+
+2
+
+### Example 2: Right rotation
+
+To rotate right by 2:
+
+```cpp
+vector<int> v = {1, 2, 3, 4, 5};
+
+rotate(v.begin(), v.end() - 2, v.end());
+```
+
+Output:
+
+```text
+4 5 1 2 3
+```
+
+### Example 3: Rotate by K positions
+
+```cpp
+int n = v.size();
+int k = 2;
+
+k %= n;
+
+rotate(v.begin(), v.begin() + k, v.end());
+```
+
+For right rotation:
+
+```cpp
+k %= n;
+
+rotate(v.begin(), v.end() - k, v.end());
+```
+
+Remember to check `n > 0` before using `% n`.
+
+### Example 4: Rotate a string
+
+```cpp
+string s = "ABCDE";
+
+rotate(s.begin(), s.begin() + 2, s.end());
+
+cout << s;
+```
+
+Output:
+
+```text
+CDEAB
+```
+
+### Example 5: Rotate only a subarray
+
+```cpp
+vector<int> v = {1, 2, 3, 4, 5, 6};
+
+rotate(v.begin() + 1, v.begin() + 3, v.begin() + 5);
+```
+
+Output:
+
+```text
+1 4 5 2 3 6
+```
+
+Only the range `[1, 5)` is rotated.
+
+### Complexity
+
+O(n)
+
+For a range of length `n`, rotation takes linear time.
+
+### 3\. Important related STL functions
+
+| Function      | Purpose                     | Complexity         |
+| ------------- | --------------------------- | ------------------ |
+| is_sorted()   | Check sorted order          | O(n)               |
+| sort()        | Sort ascending              | O(n log n)         |
+| reverse()     | Reverse range               | O(n)               |
+| rotate()      | Rotate elements             | O(n)               |
+| unique()      | Move consecutive duplicates | O(n)               |
+| count()       | Count occurrences           | O(n)               |
+| min_element() | Find minimum                | O(n)               |
+| max_element() | Find maximum                | O(n)               |
+| lower_bound() | First element ≥ target      | O(log n) on vector |
+| upper_bound() | First element > target      | O(log n) on vector |
+
+### 4\. ICPC tricks
+
+Trick 1: Check if an array is sorted before processing
+
+```cpp
+if (!is_sorted(v.begin(), v.end()))
+    sort(v.begin(), v.end());
+```
+
+Trick 2: Rotate an array without writing a loop
+
+```cpp
+rotate(v.begin(), v.begin() + 1, v.end());
+```
+
+Left rotate by one.
+
+Trick 3: Find the minimum element and move it to the beginning
+
+```cpp
+auto it = min_element(v.begin(), v.end());
+
+rotate(v.begin(), it, v.end());
+```
+
+Trick 4: Check if two strings are cyclic rotations
+
+```cpp
+string a = "ABCDE";
+string b = "CDEAB";
+
+cout << ((a.size() == b.size() &&
+          (a + a).find(b) != string::npos)
+          ? "YES" : "NO");
+```
+
+Output: `YES`
+
+### 5\. Quick memory table
+
+| What you want           | Shortcut                                                 |
+| ----------------------- | -------------------------------------------------------- |
+| Check ascending sorted  | is_sorted(v.begin(),v.end())                             |
+| Check descending sorted | is_sorted(v.begin(),v.end(),greater<int>())              |
+| Left rotate by K        | rotate(v.begin(),v.begin()+k,v.end())                    |
+| Right rotate by K       | rotate(v.begin(),v.end()-k,v.end())                      |
+| Reverse array           | reverse(v.begin(),v.end())                               |
+| Move minimum to front   | rotate(v.begin(),min_element(v.begin(),v.end()),v.end()) |
+
+ICPC tip: `rotate()` is particularly useful in cyclic array problems, circular sequences, string rotations, and problems where you need to move an element to the front without manually shifting every element.
